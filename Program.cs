@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.IO;
+using System.Linq;
 
 namespace SistemaEstacionamento
 {
@@ -68,12 +70,30 @@ namespace SistemaEstacionamento
         private decimal precoInicial = 0;
         private decimal precoPorHora = 0;
         private List<string> veiculos = new List<string>();
+        private readonly string caminhoArquivo = "veiculos.txt";
 
         public Estacionamento(decimal precoInicial, decimal precoPorHora)
         {
             this.precoInicial = precoInicial;
             this.precoPorHora = precoPorHora;
+            CarregarDados(); // Carrega os dados assim que a classe é criada
         }
+
+        private void SalvarDados()
+    {
+        // File.WriteAllLines cria ou sobrescreve o arquivo com a lista
+        File.WriteAllLines(caminhoArquivo, veiculos);
+    }
+
+    private void CarregarDados()
+    {
+        // Verifica se o arquivo existe antes de tentar ler
+        if (File.Exists(caminhoArquivo))
+        {
+            veiculos = File.ReadAllLines(caminhoArquivo).ToList();
+        }
+    }
+
 
         public void AdicionarVeiculo()
 {
@@ -81,17 +101,17 @@ namespace SistemaEstacionamento
     string placa = Console.ReadLine().ToUpper().Trim();
 
     if (ValidarPlacaMercosul(placa))
-    {
-        // Verifica se o veículo já não está no estacionamento
-        if (veiculos.Any(v => v == placa))
         {
-            Console.WriteLine("Este veículo já está estacionado aqui.");
-        }
-        else
-        {
-            veiculos.Add(placa);
-            Console.WriteLine("Veículo cadastrado com sucesso!");
-        }
+            if (veiculos.Any(v => v == placa))
+            {
+                Console.WriteLine("Veículo já está no pátio.");
+            }
+            else
+            {
+                veiculos.Add(placa);
+                SalvarDados(); // <--- Salvando no arquivo
+                Console.WriteLine("Veículo cadastrado!");
+            }
     }
     else
     {
@@ -122,6 +142,7 @@ private bool ValidarPlacaMercosul(string placa)
                 decimal valorTotal = precoInicial + (precoPorHora * horas); 
 
                 veiculos.Remove(placa);
+                SalvarDados(); // <--- Atualizando o arquivo após remoção
                 Console.WriteLine($"O veículo {placa} foi removido e o preço total foi de: R$ {valorTotal}");
             }
             else
