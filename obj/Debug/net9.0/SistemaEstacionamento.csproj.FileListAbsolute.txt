@@ -1,0 +1,15 @@
+C:\Users\druid\OneDrive\Área de Trabalho\Work\Sistema de estacionamento em c#\SistemaEstacionamento\bin\Debug\net9.0\SistemaEstacionamento.exe
+C:\Users\druid\OneDrive\Área de Trabalho\Work\Sistema de estacionamento em c#\SistemaEstacionamento\bin\Debug\net9.0\SistemaEstacionamento.deps.json
+C:\Users\druid\OneDrive\Área de Trabalho\Work\Sistema de estacionamento em c#\SistemaEstacionamento\bin\Debug\net9.0\SistemaEstacionamento.runtimeconfig.json
+C:\Users\druid\OneDrive\Área de Trabalho\Work\Sistema de estacionamento em c#\SistemaEstacionamento\bin\Debug\net9.0\SistemaEstacionamento.dll
+C:\Users\druid\OneDrive\Área de Trabalho\Work\Sistema de estacionamento em c#\SistemaEstacionamento\bin\Debug\net9.0\SistemaEstacionamento.pdb
+C:\Users\druid\OneDrive\Área de Trabalho\Work\Sistema de estacionamento em c#\SistemaEstacionamento\obj\Debug\net9.0\SistemaEstacionamento.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\druid\OneDrive\Área de Trabalho\Work\Sistema de estacionamento em c#\SistemaEstacionamento\obj\Debug\net9.0\SistemaEstacionamento.AssemblyInfoInputs.cache
+C:\Users\druid\OneDrive\Área de Trabalho\Work\Sistema de estacionamento em c#\SistemaEstacionamento\obj\Debug\net9.0\SistemaEstacionamento.AssemblyInfo.cs
+C:\Users\druid\OneDrive\Área de Trabalho\Work\Sistema de estacionamento em c#\SistemaEstacionamento\obj\Debug\net9.0\SistemaEstacionamento.csproj.CoreCompileInputs.cache
+C:\Users\druid\OneDrive\Área de Trabalho\Work\Sistema de estacionamento em c#\SistemaEstacionamento\obj\Debug\net9.0\SistemaEstacionamento.sourcelink.json
+C:\Users\druid\OneDrive\Área de Trabalho\Work\Sistema de estacionamento em c#\SistemaEstacionamento\obj\Debug\net9.0\SistemaEstacionamento.dll
+C:\Users\druid\OneDrive\Área de Trabalho\Work\Sistema de estacionamento em c#\SistemaEstacionamento\obj\Debug\net9.0\refint\SistemaEstacionamento.dll
+C:\Users\druid\OneDrive\Área de Trabalho\Work\Sistema de estacionamento em c#\SistemaEstacionamento\obj\Debug\net9.0\SistemaEstacionamento.pdb
+C:\Users\druid\OneDrive\Área de Trabalho\Work\Sistema de estacionamento em c#\SistemaEstacionamento\obj\Debug\net9.0\SistemaEstacionamento.genruntimeconfig.cache
+C:\Users\druid\OneDrive\Área de Trabalho\Work\Sistema de estacionamento em c#\SistemaEstacionamento\obj\Debug\net9.0\ref\SistemaEstacionamento.dll
