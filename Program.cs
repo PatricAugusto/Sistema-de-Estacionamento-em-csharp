@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace SistemaEstacionamento
 {
@@ -75,11 +76,36 @@ namespace SistemaEstacionamento
         }
 
         public void AdicionarVeiculo()
+{
+    Console.WriteLine("Digite a placa do veículo (Padrão Mercosul: AAA1A11):");
+    string placa = Console.ReadLine().ToUpper().Trim();
+
+    if (ValidarPlacaMercosul(placa))
+    {
+        // Verifica se o veículo já não está no estacionamento
+        if (veiculos.Any(v => v == placa))
         {
-            Console.WriteLine("Digite a placa do veículo para estacionar:");
-            string placa = Console.ReadLine();
-            veiculos.Add(placa.ToUpper());
+            Console.WriteLine("Este veículo já está estacionado aqui.");
         }
+        else
+        {
+            veiculos.Add(placa);
+            Console.WriteLine("Veículo cadastrado com sucesso!");
+        }
+    }
+    else
+    {
+        Console.WriteLine("Placa inválida! O padrão deve ser ABC1D23.");
+    }
+}
+
+// Método auxiliar para validação
+private bool ValidarPlacaMercosul(string placa)
+{
+    // O padrão Mercosul: 3 letras, 1 número, 1 letra, 2 números
+    string padrao = @"^[A-Z]{3}[0-9][A-Z][0-9]{2}$";
+    return Regex.IsMatch(placa, padrao);
+}
 
         public void RemoverVeiculo()
         {
