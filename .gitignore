@@ -1,0 +1,18 @@
+# Pastas de saída (Compilação)
+[Bb]in/
+[Oo]bj/
+
+# Pastas geradas pelo Visual Studio ou VS Code
+.vs/
+.vscode/
+
+# Arquivos de log e temporários
+*.log
+*.tmp
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
