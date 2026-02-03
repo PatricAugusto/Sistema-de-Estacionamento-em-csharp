@@ -15,11 +15,26 @@ namespace SistemaEstacionamento
             decimal precoPorHora = 0;
 
             Console.WriteLine("Bem-vindo ao sistema de estacionamento!");
-            Console.WriteLine("Digite o preço inicial:");
-            precoInicial = Convert.ToDecimal(Console.ReadLine());
 
-            Console.WriteLine("Digite o preço por hora:");
-            precoPorHora = Convert.ToDecimal(Console.ReadLine());
+            bool configuracaoValida = false;
+
+            while (!configuracaoValida)
+            {
+                try
+                {
+                    Console.WriteLine("Digite o preço inicial:");
+                    precoInicial = Convert.ToDecimal(Console.ReadLine());
+
+                    Console.WriteLine("Digite o preço por hora:");
+                    precoPorHora = Convert.ToDecimal(Console.ReadLine());
+
+                    configuracaoValida = true; // Se chegou aqui sem erro, sai do loop
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine("Erro: Digite apenas números válidos (use vírgula para decimais).");
+                }
+            }
 
             // Instanciando nossa classe de lógica
             Estacionamento es = new Estacionamento(precoInicial, precoPorHora);
@@ -80,74 +95,83 @@ namespace SistemaEstacionamento
         }
 
         private void SalvarDados()
-    {
-        // File.WriteAllLines cria ou sobrescreve o arquivo com a lista
-        File.WriteAllLines(caminhoArquivo, veiculos);
-    }
-
-    private void CarregarDados()
-    {
-        // Verifica se o arquivo existe antes de tentar ler
-        if (File.Exists(caminhoArquivo))
         {
-            veiculos = File.ReadAllLines(caminhoArquivo).ToList();
+            // File.WriteAllLines cria ou sobrescreve o arquivo com a lista
+            File.WriteAllLines(caminhoArquivo, veiculos);
         }
-    }
+
+        private void CarregarDados()
+        {
+            // Verifica se o arquivo existe antes de tentar ler
+            if (File.Exists(caminhoArquivo))
+            {
+                veiculos = File.ReadAllLines(caminhoArquivo).ToList();
+            }
+        }
 
 
         public void AdicionarVeiculo()
-{
-    Console.WriteLine("Digite a placa do veículo (Padrão Mercosul: AAA1A11):");
-    string placa = Console.ReadLine().ToUpper().Trim();
-
-    if (ValidarPlacaMercosul(placa))
         {
-            if (veiculos.Any(v => v == placa))
+            Console.WriteLine("Digite a placa do veículo (Padrão Mercosul: AAA1A11):");
+            string placa = Console.ReadLine().ToUpper().Trim();
+
+            if (ValidarPlacaMercosul(placa))
             {
-                Console.WriteLine("Veículo já está no pátio.");
+                if (veiculos.Any(v => v == placa))
+                {
+                    Console.WriteLine("Veículo já está no pátio.");
+                }
+                else
+                {
+                    veiculos.Add(placa);
+                    SalvarDados(); // <--- Salvando no arquivo
+                    Console.WriteLine("Veículo cadastrado!");
+                }
             }
             else
             {
-                veiculos.Add(placa);
-                SalvarDados(); // <--- Salvando no arquivo
-                Console.WriteLine("Veículo cadastrado!");
+                Console.WriteLine("Placa inválida! O padrão deve ser ABC1D23.");
             }
-    }
-    else
-    {
-        Console.WriteLine("Placa inválida! O padrão deve ser ABC1D23.");
-    }
-}
+        }
 
-// Método auxiliar para validação
-private bool ValidarPlacaMercosul(string placa)
-{
-    // O padrão Mercosul: 3 letras, 1 número, 1 letra, 2 números
-    string padrao = @"^[A-Z]{3}[0-9][A-Z][0-9]{2}$";
-    return Regex.IsMatch(placa, padrao);
-}
+        // Método auxiliar para validação
+        private bool ValidarPlacaMercosul(string placa)
+        {
+            // O padrão Mercosul: 3 letras, 1 número, 1 letra, 2 números
+            string padrao = @"^[A-Z]{3}[0-9][A-Z][0-9]{2}$";
+            return Regex.IsMatch(placa, padrao);
+        }
 
         public void RemoverVeiculo()
         {
-            Console.WriteLine("Digite a placa do veículo para remover:");
+            Console.WriteLine("Digite a placa para remover:");
             string placa = Console.ReadLine().ToUpper();
 
-            // Verifica se o veículo existe
             if (veiculos.Contains(placa))
             {
-                Console.WriteLine("Digite a quantidade de horas que o veículo permaneceu estacionado:");
-                int horas = Convert.ToInt32(Console.ReadLine());
-                
-                // Cálculo matemático: Preço Inicial + (Preço por Hora * Horas)
-                decimal valorTotal = precoInicial + (precoPorHora * horas); 
+                try
+                {
+                    Console.WriteLine("Digite a quantidade de horas:");
+                    int horas = Convert.ToInt32(Console.ReadLine());
 
-                veiculos.Remove(placa);
-                SalvarDados(); // <--- Atualizando o arquivo após remoção
-                Console.WriteLine($"O veículo {placa} foi removido e o preço total foi de: R$ {valorTotal}");
+                    decimal valorTotal = precoInicial + (precoPorHora * horas);
+
+                    veiculos.Remove(placa);
+                    SalvarDados();
+                    Console.WriteLine($"O veículo {placa} foi removido. Preço total: R$ {valorTotal}");
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine("Erro: Você deve digitar um número inteiro para as horas.");
+                }
+                catch (Exception ex) // Captura qualquer outro erro inesperado
+                {
+                    Console.WriteLine($"Ocorreu um erro inesperado: {ex.Message}");
+                }
             }
             else
             {
-                Console.WriteLine("Desculpe, esse veículo não está estacionado aqui. Confira se digitou a placa corretamente.");
+                Console.WriteLine("Veículo não encontrado.");
             }
         }
 
