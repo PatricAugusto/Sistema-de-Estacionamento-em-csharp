@@ -1,56 +1,62 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace SistemaEstacionamento
 {
+    // Classe principal que executa o programa
     class Program
     {
         static void Main(string[] args)
         {
-            // Configurações iniciais
+            // Variáveis para configuração de preços
             decimal precoInicial = 0;
             decimal precoPorHora = 0;
 
-            Console.WriteLine("Bem-vindo ao sistema de estacionamento!");
+            Console.Clear();
+            ExibirCabecalho();
 
+            // Bloco de configuração inicial com tratamento de erros (Try-Catch)
             bool configuracaoValida = false;
-
             while (!configuracaoValida)
             {
                 try
                 {
-                    Console.WriteLine("Digite o preço inicial:");
+                    Console.Write("Digite o preço inicial (R$): ");
                     precoInicial = Convert.ToDecimal(Console.ReadLine());
 
-                    Console.WriteLine("Digite o preço por hora:");
+                    Console.Write("Digite o preço por hora (R$): ");
                     precoPorHora = Convert.ToDecimal(Console.ReadLine());
 
-                    configuracaoValida = true; // Se chegou aqui sem erro, sai do loop
+                    configuracaoValida = true;
                 }
                 catch (FormatException)
                 {
-                    Console.WriteLine("Erro: Digite apenas números válidos (use vírgula para decimais).");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Erro: Use apenas números e vírgula para valores decimais.");
+                    Console.ResetColor();
                 }
             }
 
-            // Instanciando nossa classe de lógica
+            // Instância da classe de negócio
             Estacionamento es = new Estacionamento(precoInicial, precoPorHora);
 
-            string opcao = string.Empty;
             bool exibirMenu = true;
-
-            // Loop do menu principal
             while (exibirMenu)
             {
                 Console.Clear();
-                Console.WriteLine("Digite a sua opção:");
-                Console.WriteLine("1 - Cadastrar veículo");
-                Console.WriteLine("2 - Remover veículo");
-                Console.WriteLine("3 - Listar veículos");
-                Console.WriteLine("4 - Encerrar");
+                ExibirCabecalho();
+                
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("  1 - Cadastrar veículo");
+                Console.WriteLine("  2 - Remover veículo");
+                Console.WriteLine("  3 - Listar veículos");
+                Console.WriteLine("  4 - Encerrar");
+                Console.ResetColor();
+                Console.WriteLine("  ──────────────────────────────");
+                Console.Write("  Escolha uma opção: ");
 
                 switch (Console.ReadLine())
                 {
@@ -67,23 +73,38 @@ namespace SistemaEstacionamento
                         exibirMenu = false;
                         break;
                     default:
-                        Console.WriteLine("Opção inválida");
+                        Console.WriteLine("Opção inválida. Tente novamente.");
                         break;
                 }
 
-                Console.WriteLine("Pressione uma tecla para continuar");
-                Console.ReadLine();
+                if (exibirMenu)
+                {
+                    Console.WriteLine("\nPressione qualquer tecla para continuar...");
+                    Console.ReadKey();
+                }
             }
 
-            Console.WriteLine("O programa se encerrou.");
+            Console.WriteLine("Sistema encerrado. Até logo!");
+        }
+
+        static void ExibirCabecalho()
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine(@"
+  ╔════════════════════════════════════════╗
+  ║       SISTEMA DE ESTACIONAMENTO        ║
+  ╚════════════════════════════════════════╝");
+            Console.ResetColor();
         }
     }
 
-    // Classe que contém a lógica do negócio
+    /// <summary>
+    /// Classe responsável por gerenciar a lógica de veículos e persistência.
+    /// </summary>
     public class Estacionamento
     {
-        private decimal precoInicial = 0;
-        private decimal precoPorHora = 0;
+        private decimal precoInicial;
+        private decimal precoPorHora;
         private List<string> veiculos = new List<string>();
         private readonly string caminhoArquivo = "veiculos.txt";
 
@@ -91,104 +112,120 @@ namespace SistemaEstacionamento
         {
             this.precoInicial = precoInicial;
             this.precoPorHora = precoPorHora;
-            CarregarDados(); // Carrega os dados assim que a classe é criada
+            CarregarDados();
         }
+
+        // --- MÉTODOS DE PERSISTÊNCIA (Arquivos) ---
 
         private void SalvarDados()
         {
-            // File.WriteAllLines cria ou sobrescreve o arquivo com a lista
-            File.WriteAllLines(caminhoArquivo, veiculos);
+            try {
+                File.WriteAllLines(caminhoArquivo, veiculos);
+            } catch (Exception ex) {
+                Console.WriteLine($"Erro ao salvar dados: {ex.Message}");
+            }
         }
 
         private void CarregarDados()
         {
-            // Verifica se o arquivo existe antes de tentar ler
             if (File.Exists(caminhoArquivo))
             {
                 veiculos = File.ReadAllLines(caminhoArquivo).ToList();
             }
         }
 
+        // --- MÉTODOS DE NEGÓCIO ---
 
         public void AdicionarVeiculo()
         {
-            Console.WriteLine("Digite a placa do veículo (Padrão Mercosul: AAA1A11):");
+            Console.WriteLine("\n--- CADASTRAR VEÍCULO ---");
+            Console.Write("Digite a placa (Padrão Mercosul AAA1A11): ");
             string placa = Console.ReadLine().ToUpper().Trim();
 
             if (ValidarPlacaMercosul(placa))
             {
                 if (veiculos.Any(v => v == placa))
                 {
-                    Console.WriteLine("Veículo já está no pátio.");
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("⚠️ Este veículo já está estacionado.");
                 }
                 else
                 {
                     veiculos.Add(placa);
-                    SalvarDados(); // <--- Salvando no arquivo
-                    Console.WriteLine("Veículo cadastrado!");
+                    SalvarDados();
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("✅ Veículo cadastrado com sucesso!");
                 }
             }
             else
             {
-                Console.WriteLine("Placa inválida! O padrão deve ser ABC1D23.");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("❌ Placa inválida! Use o formato ABC1D23.");
             }
-        }
-
-        // Método auxiliar para validação
-        private bool ValidarPlacaMercosul(string placa)
-        {
-            // O padrão Mercosul: 3 letras, 1 número, 1 letra, 2 números
-            string padrao = @"^[A-Z]{3}[0-9][A-Z][0-9]{2}$";
-            return Regex.IsMatch(placa, padrao);
+            Console.ResetColor();
         }
 
         public void RemoverVeiculo()
         {
-            Console.WriteLine("Digite a placa para remover:");
-            string placa = Console.ReadLine().ToUpper();
+            Console.WriteLine("\n--- REMOVER VEÍCULO ---");
+            Console.Write("Digite a placa para remover: ");
+            string placa = Console.ReadLine().ToUpper().Trim();
 
             if (veiculos.Contains(placa))
             {
                 try
                 {
-                    Console.WriteLine("Digite a quantidade de horas:");
+                    Console.Write("Digite a quantidade de horas de permanência: ");
                     int horas = Convert.ToInt32(Console.ReadLine());
 
                     decimal valorTotal = precoInicial + (precoPorHora * horas);
 
                     veiculos.Remove(placa);
                     SalvarDados();
-                    Console.WriteLine($"O veículo {placa} foi removido. Preço total: R$ {valorTotal}");
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"✅ O veículo {placa} foi removido.");
+                    Console.WriteLine($"💰 Valor total a pagar: R$ {valorTotal:N2}");
                 }
                 catch (FormatException)
                 {
-                    Console.WriteLine("Erro: Você deve digitar um número inteiro para as horas.");
-                }
-                catch (Exception ex) // Captura qualquer outro erro inesperado
-                {
-                    Console.WriteLine($"Ocorreu um erro inesperado: {ex.Message}");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("❌ Erro: Informe um número inteiro para as horas.");
                 }
             }
             else
             {
-                Console.WriteLine("Veículo não encontrado.");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("❌ Veículo não encontrado no sistema.");
             }
+            Console.ResetColor();
         }
 
         public void ListarVeiculos()
         {
-            if (veiculos.Count > 0)
+            Console.WriteLine("\n--- VEÍCULOS ESTACIONADOS ---");
+            if (veiculos.Any())
             {
-                Console.WriteLine("Os veículos estacionados são:");
+                int contador = 1;
                 foreach (var v in veiculos)
                 {
-                    Console.WriteLine(v);
+                    Console.WriteLine($"{contador} - {v}");
+                    contador++;
                 }
             }
             else
             {
-                Console.WriteLine("Não há veículos estacionados.");
+                Console.WriteLine("Pátio vazio.");
             }
+        }
+
+        /// <summary>
+        /// Valida se a placa segue o padrão Mercosul usando Expressão Regular (Regex).
+        /// </summary>
+        private bool ValidarPlacaMercosul(string placa)
+        {
+            string padrao = @"^[A-Z]{3}[0-9][A-Z][0-9]{2}$";
+            return Regex.IsMatch(placa, padrao);
         }
     }
 }
