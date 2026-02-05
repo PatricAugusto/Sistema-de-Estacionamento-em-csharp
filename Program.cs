@@ -48,12 +48,13 @@ namespace SistemaEstacionamento
             {
                 Console.Clear();
                 ExibirCabecalho();
-                
+
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("  1 - Cadastrar veículo");
                 Console.WriteLine("  2 - Remover veículo");
                 Console.WriteLine("  3 - Listar veículos");
                 Console.WriteLine("  4 - Encerrar");
+                Console.WriteLine("  5 - Exibir Historico");
                 Console.ResetColor();
                 Console.WriteLine("  ──────────────────────────────");
                 Console.Write("  Escolha uma opção: ");
@@ -71,6 +72,9 @@ namespace SistemaEstacionamento
                         break;
                     case "4":
                         exibirMenu = false;
+                        break;
+                    case "5":
+                        es.ExibirHistorico();
                         break;
                     default:
                         Console.WriteLine("Opção inválida. Tente novamente.");
@@ -107,6 +111,7 @@ namespace SistemaEstacionamento
         private decimal precoPorHora;
         private List<string> veiculos = new List<string>();
         private readonly string caminhoArquivo = "veiculos.txt";
+        private readonly string caminhoHistorico = "historico.txt";
 
         public Estacionamento(decimal precoInicial, decimal precoPorHora)
         {
@@ -119,9 +124,12 @@ namespace SistemaEstacionamento
 
         private void SalvarDados()
         {
-            try {
+            try
+            {
                 File.WriteAllLines(caminhoArquivo, veiculos);
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 Console.WriteLine($"Erro ao salvar dados: {ex.Message}");
             }
         }
@@ -183,9 +191,10 @@ namespace SistemaEstacionamento
                     veiculos.Remove(placa);
                     SalvarDados();
 
+                    RegistrarPagamento(placa, valorTotal);
+
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"✅ O veículo {placa} foi removido.");
-                    Console.WriteLine($"💰 Valor total a pagar: R$ {valorTotal:N2}");
+                    Console.WriteLine($"✅ Veículo {placa} removido. Total: R$ {valorTotal:N2}");
                 }
                 catch (FormatException)
                 {
@@ -199,6 +208,14 @@ namespace SistemaEstacionamento
                 Console.WriteLine("❌ Veículo não encontrado no sistema.");
             }
             Console.ResetColor();
+        }
+
+        private void RegistrarPagamento(string placa, decimal valor)
+        {
+            string registro = $"{DateTime.Now:dd/MM/yyyy HH:mm:ss} | Placa: {placa} | Valor: R$ {valor:N2}";
+
+            // File.AppendAllText adiciona ao final do arquivo em vez de apagar o anterior
+            File.AppendAllText(caminhoHistorico, registro + Environment.NewLine);
         }
 
         public void ListarVeiculos()
@@ -216,6 +233,28 @@ namespace SistemaEstacionamento
             else
             {
                 Console.WriteLine("Pátio vazio.");
+            }
+        }
+
+        public void ExibirHistorico()
+        {
+            Console.WriteLine("\n--- HISTÓRICO DE PAGAMENTOS ---");
+            if (File.Exists(caminhoHistorico))
+            {
+                string[] linhas = File.ReadAllLines(caminhoHistorico);
+                decimal totalGeral = 0;
+
+                foreach (var linha in linhas)
+                {
+                    Console.WriteLine(linha);
+                    // Lógica simples para somar o total (opcional)
+                }
+                Console.WriteLine("  ──────────────────────────────");
+                Console.WriteLine($"  Total de registros: {linhas.Length}");
+            }
+            else
+            {
+                Console.WriteLine("Nenhum histórico encontrado.");
             }
         }
 
