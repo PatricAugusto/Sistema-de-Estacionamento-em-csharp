@@ -53,8 +53,8 @@ namespace SistemaEstacionamento
                 Console.WriteLine("  1 - Cadastrar veículo");
                 Console.WriteLine("  2 - Remover veículo");
                 Console.WriteLine("  3 - Listar veículos");
-                Console.WriteLine("  4 - Encerrar");
-                Console.WriteLine("  5 - Exibir Historico");
+                Console.WriteLine("  4 - Exibir Historico");
+                Console.WriteLine("  5 - Encerrar");
                 Console.ResetColor();
                 Console.WriteLine("  ──────────────────────────────");
                 Console.Write("  Escolha uma opção: ");
@@ -71,10 +71,10 @@ namespace SistemaEstacionamento
                         es.ListarVeiculos();
                         break;
                     case "4":
-                        exibirMenu = false;
+                        es.ExibirHistorico();
                         break;
                     case "5":
-                        es.ExibirHistorico();
+                        exibirMenu = false;
                         break;
                     default:
                         Console.WriteLine("Opção inválida. Tente novamente.");
